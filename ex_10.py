@@ -31,7 +31,6 @@ class User:
                 'fields': 'friends',
             }
         )
-
         list_id_1 = json.loads(response.text)['response']['count']
         return list_id_1
 
@@ -48,9 +47,26 @@ class User:
         list_id_2 = set([user_id['id'] for user_id in json.loads(response.text)['response']['items']])
         return list_id_2
 
+    def __and__(self, other):
+        other.user_id = user_id
+        response = requests.get(
+            'https://api.vk.com/method/friends.get',
+            params={
+                'access_token': token,
+                'v': version,
+                'user_id': self.user_id,
+                'fields': 'friends',
+            }
+        )
+        list_id_2 = set([user_id['id'] for user_id in json.loads(response.text)['response']['items']])
+        return list_id_2
+
 user_1 = User(86780228)
 user_2 = User(26205261)
+#user_1 & user_2
 print(f'{user_1.list_users()} {user_1} и {user_2.list_users()} {user_2} имеют {user_1.friends_list()} и {user_2.friends_list()} друзей соответсвено')
 print('=====')
-intersection_friends = user_1.intersection_friends_list().intersection(user_2.intersection_friends_list())
-print(f'Общее число друзей = {len(intersection_friends)}')
+print(user_1.intersection_friends_list())
+print(user_2.intersection_friends_list())
+print('=====')
+print()
